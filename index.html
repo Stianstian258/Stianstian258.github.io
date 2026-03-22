@@ -1,1 +1,947 @@
-Hello World.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ᴛʜᴇ sᴛɪᴀɴ — Digital Ecosystem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --obsidian:    #0a0a0f;
+            --deep:        #0f0f1a;
+            --void:        #07070e;
+            --purple-core: #7c3aed;
+            --purple-glow: #a855f7;
+            --purple-soft: #c084fc;
+            --purple-dim:  #4c1d95;
+            --accent:      #e879f9;
+            --silver:      #e2e8f0;
+            --muted:       #64748b;
+            --glass:       rgba(124, 58, 237, 0.08);
+            --glass-border:rgba(168, 85, 247, 0.2);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--obsidian);
+            color: var(--silver);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── Custom cursor ── */
+        .cursor {
+            width: 12px; height: 12px;
+            background: var(--purple-glow);
+            border-radius: 50%;
+            position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+            mix-blend-mode: screen;
+        }
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1px solid rgba(168,85,247,0.5);
+            border-radius: 50%;
+            position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.15s ease;
+        }
+
+        /* ── Noise overlay ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── Ambient glow orbs ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%);
+            top: -200px; left: -200px;
+            animation: drift1 20s ease-in-out infinite alternate;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(232,121,249,0.1), transparent 70%);
+            bottom: -150px; right: -150px;
+            animation: drift2 25s ease-in-out infinite alternate;
+        }
+        .orb-3 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(168,85,247,0.12), transparent 70%);
+            top: 50%; left: 50%;
+            animation: drift3 18s ease-in-out infinite alternate;
+        }
+        @keyframes drift1 { to { transform: translate(100px, 150px); } }
+        @keyframes drift2 { to { transform: translate(-120px, -80px); } }
+        @keyframes drift3 { to { transform: translate(80px, -120px); } }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.25rem 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(168,85,247,0.08);
+            backdrop-filter: blur(20px);
+            background: rgba(10,10,15,0.7);
+        }
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--purple-glow), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--purple-soft); }
+        .nav-cta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.55rem 1.25rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            background: var(--glass);
+            color: var(--purple-soft);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover {
+            background: rgba(124,58,237,0.2);
+            border-color: var(--purple-glow);
+            color: #fff;
+        }
+
+        /* ── HERO ── */
+        #hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex; align-items: center;
+            padding: 8rem 5% 5rem;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(124,58,237,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+        }
+        .hero-content { max-width: 780px; }
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--purple-soft);
+            border: 1px solid var(--glass-border);
+            padding: 0.4rem 0.9rem;
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            animation: fadeUp 0.8s ease both;
+        }
+        .hero-tag::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--purple-glow);
+            border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3.2rem, 8vw, 7rem);
+            font-weight: 800;
+            line-height: 0.92;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.8s 0.1s ease both;
+        }
+        h1 .line-1 { display: block; color: var(--silver); }
+        h1 .line-2 {
+            display: block;
+            background: linear-gradient(135deg, var(--purple-glow) 0%, var(--accent) 60%, #f0abfc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-sub {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 520px;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s 0.2s ease both;
+        }
+        .hero-actions {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            animation: fadeUp 0.8s 0.3s ease both;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: linear-gradient(135deg, var(--purple-core), var(--purple-glow));
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: none;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(124,58,237,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(168,85,247,0.5);
+        }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: transparent;
+            color: var(--silver);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: none;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--purple-glow);
+            color: var(--purple-soft);
+            background: var(--glass);
+        }
+
+        /* hero right visual */
+        .hero-visual {
+            position: absolute;
+            right: 5%; top: 50%;
+            transform: translateY(-50%);
+            width: min(420px, 40vw);
+            animation: fadeUp 1s 0.4s ease both;
+        }
+        .terminal {
+            background: rgba(15,15,26,0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(124,58,237,0.15), inset 0 1px 0 rgba(168,85,247,0.1);
+        }
+        .terminal-bar {
+            padding: 0.75rem 1rem;
+            background: rgba(124,58,237,0.1);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; }
+        .dot-y { background: #febc2e; }
+        .dot-g { background: #28c840; }
+        .terminal-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-left: auto;
+            letter-spacing: 0.1em;
+        }
+        .terminal-body {
+            padding: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 2;
+        }
+        .t-line { display: flex; gap: 0.75rem; }
+        .t-prompt { color: var(--purple-glow); }
+        .t-cmd { color: var(--silver); }
+        .t-out { color: var(--muted); padding-left: 1.25rem; }
+        .t-success { color: #4ade80; }
+        .t-accent { color: var(--accent); }
+        .blink {
+            display: inline-block;
+            width: 8px; height: 14px;
+            background: var(--purple-glow);
+            margin-left: 2px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* ── SECTION SHARED ── */
+        section { position: relative; z-index: 2; padding: 7rem 5%; }
+        .section-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--purple-soft);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .section-sub {
+            font-size: 0.95rem;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 500px;
+        }
+        .divider {
+            width: 40px; height: 2px;
+            background: linear-gradient(90deg, var(--purple-glow), transparent);
+            margin: 1.5rem 0;
+        }
+
+        /* ── FEATURES ── */
+        #features { background: var(--deep); }
+        .features-header { max-width: 600px; margin-bottom: 4rem; }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5px;
+            background: var(--glass-border);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .feature-card {
+            background: var(--deep);
+            padding: 2.5rem;
+            transition: background 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .feature-card:hover { background: rgba(124,58,237,0.06); }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+        .feature-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--silver);
+        }
+        .feature-desc {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        /* ── PROJECTS ── */
+        #projects { background: var(--obsidian); }
+        .projects-header { max-width: 600px; margin-bottom: 4rem; }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .project-card {
+            background: var(--deep);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: none;
+        }
+        .project-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(124,58,237,0.08), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .project-card:hover { border-color: rgba(168,85,247,0.4); transform: translateY(-4px); }
+        .project-card:hover::after { opacity: 1; }
+        .project-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.7rem;
+            border-radius: 2px;
+            margin-bottom: 1.25rem;
+            display: inline-block;
+        }
+        .badge-live { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+        .badge-soon { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+        .badge-beta { background: rgba(168,85,247,0.1); color: var(--purple-soft); border: 1px solid var(--glass-border); }
+        .project-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.6rem;
+            color: var(--silver);
+        }
+        .project-desc {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+        }
+        .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .project-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            padding: 0.25rem 0.6rem;
+            background: var(--glass);
+            border: 1px solid rgba(124,58,237,0.15);
+            border-radius: 2px;
+            color: var(--muted);
+        }
+        .project-arrow {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            color: var(--muted);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        .project-card:hover .project-arrow {
+            color: var(--purple-soft);
+            transform: translate(3px, -3px);
+        }
+
+        /* ── COMMANDS ── */
+        #commands { background: var(--void); }
+        .commands-header { max-width: 600px; margin-bottom: 4rem; }
+        .commands-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        .cmd-categories { display: flex; flex-direction: column; gap: 0.5rem; }
+        .cmd-cat {
+            padding: 0.9rem 1.25rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: none;
+            transition: all 0.25s;
+            display: flex; align-items: center; gap: 0.75rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+        .cmd-cat.active, .cmd-cat:hover {
+            border-color: var(--glass-border);
+            background: var(--glass);
+            color: var(--purple-soft);
+        }
+        .cmd-cat-icon { font-size: 1rem; }
+        .cmd-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .cmd-item {
+            background: var(--deep);
+            border: 1px solid rgba(124,58,237,0.1);
+            border-radius: 4px;
+            padding: 1rem 1.25rem;
+            transition: border-color 0.25s;
+        }
+        .cmd-item:hover { border-color: rgba(168,85,247,0.3); }
+        .cmd-name {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--purple-soft);
+            margin-bottom: 0.3rem;
+        }
+        .cmd-desc { font-size: 0.82rem; color: var(--muted); }
+
+        /* ── CONTACT ── */
+        #contact { background: var(--deep); }
+        .contact-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .contact-inner .section-sub { margin: 0 auto 3rem; }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .contact-card {
+            background: var(--obsidian);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 1.75rem 1.25rem;
+            text-decoration: none;
+            color: var(--silver);
+            transition: all 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+        }
+        .contact-card:hover {
+            border-color: var(--purple-glow);
+            background: var(--glass);
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(124,58,237,0.2);
+        }
+        .contact-icon { font-size: 1.5rem; }
+        .contact-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .contact-val { font-size: 0.875rem; }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative; z-index: 2;
+            padding: 2.5rem 5%;
+            border-top: 1px solid rgba(168,85,247,0.08);
+            display: flex;
+            align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--purple-glow), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .footer-copy {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+        .footer-links { display: flex; gap: 1.5rem; }
+        .footer-links a {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--purple-soft); }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: var(--purple-dim); border-radius: 2px; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .hero-visual { display: none; }
+            .commands-layout { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">𝐓𝐇𝐄 𝐒𝐓𝐈𝐀𝐍</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#commands">Commands</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="https://github.com/TheStian/obsidian-md" class="nav-cta">Get the Bot →</a>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-tag">WhatsApp Automation Ecosystem</div>
+            <h1>
+                <span class="line-1">𝐎𝐁𝐒𝐈𝐃𝐈𝐀𝐍</span>
+                <span class="line-2">𝐌𝐃</span>
+            </h1>
+            <p class="hero-sub">
+                A next-generation WhatsApp bot ecosystem — built for groups, individuals, and developers who demand more from their automation.
+            </p>
+            <div class="hero-actions">
+                <a href="#commands" class="btn-primary">
+                    <span>⚡</span> Explore Commands
+                </a>
+                <a href="#projects" class="btn-secondary">
+                    <span>◈</span> Our Projects
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                    <div class="terminal-title">obsidian-md ~ shell</div>
+                </div>
+                <div class="terminal-body">
+                    <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">.ping</span></div>
+                    <div class="t-out t-success">🚀 Pong! — 23ms</div>
+                    <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">.livescore</span></div>
+                    <div class="t-out t-accent">⚽ Chelsea 2 - 1 Arsenal</div>
+                    <div class="t-out" style="padding-left:1.25rem">⚽ Real Madrid 3 - 0 Barca</div>
+                    <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">.mode private</span></div>
+                    <div class="t-out t-success">✅ Bot is now in private mode</div>
+                    <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">.song Faded Alan Walker</span></div>
+                    <div class="t-out t-accent">🎵 Downloading: Faded...</div>
+                    <div class="t-out t-success">✅ Sent!</div>
+                    <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd"><span class="blink"></span></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <div class="features-header reveal">
+            <div class="section-tag">// capabilities</div>
+            <h2 class="section-title">Built different.<br>Works flawlessly.</h2>
+            <div class="divider"></div>
+            <p class="section-sub">Every feature engineered with precision — from live sports to AI, media downloads to group management.</p>
+        </div>
+        <div class="features-grid reveal">
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <div class="feature-name">Lightning Fast</div>
+                <p class="feature-desc">Sub-100ms response times with intelligent caching and multi-API fallback chains that never let you down.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎵</span>
+                <div class="feature-name">Media Downloads</div>
+                <p class="feature-desc">Download from YouTube, TikTok, Facebook, Instagram and more — HD video and lossless audio, no watermarks.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚽</span>
+                <div class="feature-name">Live Sports</div>
+                <p class="feature-desc">Real-time scores, standings, top scorers, and match history across 7 top leagues powered by ESPN's live API.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔒</span>
+                <div class="feature-name">Private Mode</div>
+                <p class="feature-desc">Lock the bot to owner-only access instantly. Full sudo system with granular permission control.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <div class="feature-name">Clone System</div>
+                <p class="feature-desc">Spin up linked bot clones for different numbers from a single panel — the rentbot ecosystem.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <div class="feature-name">Group Management</div>
+                <p class="feature-desc">Antilink, antitag, antibadword, welcome/goodbye, auto-reactions and more — fully configurable per group.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="projects-header reveal">
+            <div class="section-tag">// ecosystem</div>
+            <h2 class="section-title">The projects.</h2>
+            <div class="divider"></div>
+            <p class="section-sub">More than a bot — a growing ecosystem of tools built around WhatsApp automation.</p>
+        </div>
+        <div class="projects-grid">
+            <div class="project-card reveal" onmousemove="trackMouse(this, event)">
+                <span class="project-arrow">↗</span>
+                <span class="project-badge badge-live">● Live</span>
+                <div class="project-name">OBSIDIAN MD</div>
+                <p class="project-desc">The flagship WhatsApp bot. Packed with 50+ commands spanning downloads, sports, AI, group tools and more.</p>
+                <div class="project-tags">
+                    <span class="project-tag">Baileys</span>
+                    <span class="project-tag">Node.js</span>
+                    <span class="project-tag">WhatsApp</span>
+                    <span class="project-tag">Multi-API</span>
+                </div>
+            </div>
+            <div class="project-card reveal" onmousemove="trackMouse(this, event)" style="transition-delay:0.1s">
+                <span class="project-arrow">↗</span>
+                <span class="project-badge badge-beta">◈ Beta</span>
+                <div class="project-name">RENTBOT PANEL</div>
+                <p class="project-desc">A clone deployment system — link multiple numbers and manage all bot instances from a single control point.(Coming Soon)</p>
+                <div class="project-tags">
+                    <span class="project-tag">Multi-Session</span>
+                    <span class="project-tag">Pterodactyl</span>
+                    <span class="project-tag">Pairing API</span>
+                </div>
+            </div>
+            <div class="project-card reveal" onmousemove="trackMouse(this, event)" style="transition-delay:0.2s">
+                <span class="project-arrow">↗</span>
+                <span class="project-badge badge-soon">◌ Soon</span>
+                <div class="project-name">STIAN DASHBOARD</div>
+                <p class="project-desc">A web-based control panel for managing all your OBSIDIAN bots, settings, and group configurations remotely.</p>
+                <div class="project-tags">
+                    <span class="project-tag">Web Panel</span>
+                    <span class="project-tag">Real-time</span>
+                    <span class="project-tag">REST API</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMANDS -->
+    <section id="commands">
+        <div class="commands-header reveal">
+            <div class="section-tag">// command reference</div>
+            <h2 class="section-title">What can it do?</h2>
+            <div class="divider"></div>
+            <p class="section-sub">A snapshot of what OBSIDIAN MD handles — use the prefix configured on your instance.</p>
+        </div>
+        <div class="commands-layout reveal">
+            <div class="cmd-categories" id="cmdCats">
+                <div class="cmd-cat active" onclick="showCat('general')" data-cat="general">
+                    <span class="cmd-cat-icon">⚡</span> General
+                </div>
+                <div class="cmd-cat" onclick="showCat('downloader')" data-cat="downloader">
+                    <span class="cmd-cat-icon">📥</span> Downloader
+                </div>
+                <div class="cmd-cat" onclick="showCat('sports')" data-cat="sports">
+                    <span class="cmd-cat-icon">⚽</span> Sports
+                </div>
+                <div class="cmd-cat" onclick="showCat('group')" data-cat="group">
+                    <span class="cmd-cat-icon">👥</span> Group
+                </div>
+                <div class="cmd-cat" onclick="showCat('owner')" data-cat="owner">
+                    <span class="cmd-cat-icon">🔒</span> Owner
+                </div>
+            </div>
+            <div class="cmd-list" id="cmdList"></div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="contact-inner">
+            <div class="reveal">
+                <div class="section-tag">// get in touch</div>
+                <h2 class="section-title">Connect.</h2>
+                <div class="divider" style="margin:1.5rem auto"></div>
+                <p class="section-sub">Want the bot, have a question, or interested in a custom build? Reach out.</p>
+            </div>
+            <div class="contact-grid reveal">
+    <a href="https://wa.me/+254705615631" class="contact-card">
+        <span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span>
+        <span class="contact-label">WhatsApp</span>
+        <span class="contact-val">Chat with us</span>
+    </a>
+    <a href="https://github.com/TheStian" class="contact-card">
+        <span class="contact-icon"><i class="fa-brands fa-github"></i></span>
+        <span class="contact-label">GitHub</span>
+        <span class="contact-val">@TheStian</span>
+    </a>
+    <a href="https://t.me/Theestian" class="contact-card">
+        <span class="contact-icon"><i class="fa-brands fa-telegram"></i></span>
+        <span class="contact-label">Telegram</span>
+        <span class="contact-val">@Theestian</span>
+    </a>
+    <a href="https://whatsapp.com/channel/0029VbBz2HC0G0XatbyjGQ3m" class="contact-card">
+        <span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span>
+        <span class="contact-label">Channel</span>
+        <span class="contact-val">Updates</span>
+    </a>
+</div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">𝐓𝐇𝐄 𝐒𝐓𝐈𝐀𝐍</div>
+        <div class="footer-copy">© 2026 ᴛʜᴇ sᴛɪᴀɴ — All rights reserved</div>
+        <div class="footer-links">
+            <a href="#hero">Top</a>
+            <a href="#features">Features</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // ── Cursor ──
+        const cursor = document.getElementById('cursor');
+        const ring   = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursor.style.left = mx + 'px';
+            cursor.style.top  = my + 'px';
+        });
+        function animRing() {
+            rx += (mx - rx) * 0.12;
+            ry += (my - ry) * 0.12;
+            ring.style.left = rx + 'px';
+            ring.style.top  = ry + 'px';
+            requestAnimationFrame(animRing);
+        }
+        animRing();
+
+        // ── Project card mouse glow ──
+        function trackMouse(card, e) {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+            const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+            card.style.setProperty('--mx', x + '%');
+            card.style.setProperty('--my', y + '%');
+        }
+
+        // ── Scroll reveal ──
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+        // ── Commands ──
+        const cmds = {
+            general: [
+                { name: '.ping',    desc: 'Check bot speed and uptime status' },
+                { name: '.uptime',  desc: 'Show how long the bot has been running' },
+                { name: '.help',    desc: 'Display all available commands' },
+                { name: '.alive',   desc: 'Check if the bot is online' },
+                { name: '.save',    desc: 'Save a replied status or media to inbox' },
+                { name: '.fullpp',  desc: 'Set a full uncropped profile picture' },
+            ],
+            downloader: [
+                { name: '.song',    desc: 'Download audio from YouTube by name or URL' },
+                { name: '.fb',      desc: 'Download Facebook videos in HD or SD' },
+                { name: '.tiktok',  desc: 'Download TikTok videos without watermark' },
+                { name: '.yt',      desc: 'Download YouTube videos directly' },
+                { name: '.ig',      desc: 'Download Instagram reels and posts' },
+                { name: '.spotify', desc: 'Get Spotify track info and audio' },
+            ],
+            sports: [
+                { name: '.livescore',       desc: 'Live scores across 6 top leagues' },
+                { name: '.standings',       desc: 'League table — .standings la liga' },
+                { name: '.topscorers',      desc: 'Top goalscorers — .topscorers epl' },
+                { name: '.upcomingmatches', desc: 'Upcoming fixtures for a league' },
+                { name: '.gamehistory',     desc: 'Recent results — by league or team' },
+                { name: '.sportnews',       desc: 'Latest football news headlines' },
+            ],
+            group: [
+                { name: '.antilink',  desc: 'Toggle antilink protection on/off' },
+                { name: '.antitag',   desc: 'Block mass-tag spam in groups' },
+                { name: '.welcome',   desc: 'Enable welcome messages for new members' },
+                { name: '.warn',      desc: 'Warn a member (3 warns = kick)' },
+                { name: '.tagall',    desc: 'Mention all group members at once' },
+                { name: '.mute',      desc: 'Mute the group (admins only)' },
+            ],
+            owner: [
+                { name: '.mode private', desc: 'Restrict bot to owner/sudo only' },
+                { name: '.mode public',  desc: 'Allow everyone to use the bot' },
+                { name: '.mode status',  desc: 'Check current bot mode' },
+                { name: '.areact on',    desc: 'Enable command reactions globally' },
+                { name: '.areact off',   desc: 'Disable all command reactions' },
+                { name: '.rentbot(BETA)',      desc: 'Spin up a new bot clone' },
+            ],
+        };
+
+        function showCat(cat) {
+            document.querySelectorAll('.cmd-cat').forEach(el => el.classList.remove('active'));
+            document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
+            const list = document.getElementById('cmdList');
+            list.innerHTML = '';
+            cmds[cat].forEach((c, i) => {
+                const el = document.createElement('div');
+                el.className = 'cmd-item';
+                el.style.animationDelay = (i * 0.05) + 's';
+                el.innerHTML = `<div class="cmd-name">${c.name}</div><div class="cmd-desc">${c.desc}</div>`;
+                list.appendChild(el);
+            });
+        }
+        showCat('general');
+    </script>
+</body>
+</html>
